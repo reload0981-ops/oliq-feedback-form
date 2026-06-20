@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OLIQ — ฟอร์มเก็บ Feedback Validation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--pink:#f4d4ef;--pink-soft:#fbeef8;--plum:#9B3D7D;--plum-deep:#6f2a59;--ink:#3a3340;--gray:#9AA0A6;--line:#c9b3c4}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"IBM Plex Sans Thai",sans-serif;color:var(--ink);background:#e9ecef;line-height:1.5;font-size:11pt}
+  .sheet{max-width:200mm;margin:8mm auto;background:#fff;padding:12mm 12mm 16mm;box-shadow:0 2px 14px rgba(0,0,0,.18)}
+  .toolbar{position:sticky;top:0;z-index:5;max-width:200mm;margin:0 auto;padding:6px 0;text-align:right}
+  .toolbar button{font-family:inherit;font-size:11pt;font-weight:600;background:var(--plum);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer}
+  .toolbar button:hover{background:var(--plum-deep)}
+
+  header.top{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid var(--pink);padding-bottom:4mm;margin-bottom:5mm}
+  .logo{font-weight:700;letter-spacing:2px;color:var(--plum);font-size:22pt}
+  header.top .ttl{font-size:13pt;font-weight:700;color:var(--plum-deep);text-align:right}
+  header.top .ttl small{display:block;font-weight:400;font-size:8.5pt;color:var(--gray)}
+
+  .sec{margin-bottom:5mm;break-inside:avoid;page-break-inside:avoid}
+  .sec>h3{background:var(--pink-soft);color:var(--plum);font-size:11.5pt;font-weight:700;border-left:4px solid var(--plum);padding:2mm 3mm;border-radius:0 4px 4px 0;margin-bottom:3mm}
+  .q{margin-bottom:3mm}
+  .q>label.lab{display:block;font-weight:500;margin-bottom:1mm}
+  .hint{color:var(--gray);font-size:8.5pt}
+
+  /* fill-in line */
+  input[type=text],input[type=number],input[type=date]{font-family:inherit;font-size:10.5pt;border:none;border-bottom:1px solid var(--line);padding:1mm 1mm;background:transparent;color:var(--ink);min-width:30mm}
+  input.long{width:100%}
+  input.mid{width:55mm}
+  input.sm{width:20mm}
+  textarea{font-family:inherit;font-size:10.5pt;width:100%;border:1px solid var(--line);border-radius:6px;padding:2mm;min-height:14mm;resize:vertical;background:transparent}
+
+  /* option chips */
+  .opts{display:flex;flex-wrap:wrap;gap:2mm 5mm}
+  .opt{display:inline-flex;align-items:center;gap:1.5mm;font-size:10pt}
+  .opt input{width:14px;height:14px;accent-color:var(--plum)}
+  .row2{display:flex;gap:6mm;flex-wrap:wrap}
+  .row2>div{flex:1;min-width:60mm}
+  .inline{display:inline-flex;align-items:center;gap:1.5mm}
+
+  .verb{background:var(--pink-soft);border-radius:6px;padding:3mm;margin-bottom:2mm;font-style:italic}
+  .hyp .opt{display:flex;margin-bottom:2mm}
+  .note{font-size:8.5pt;color:var(--gray);border-top:1px dashed var(--line);padding-top:2mm;margin-top:4mm}
+
+  @media print{
+    body{background:#fff;font-size:10.5pt}
+    .toolbar{display:none}
+    .sheet{box-shadow:none;margin:0;max-width:100%;padding:0}
+    @page{size:A4 portrait;margin:12mm}
+    input,textarea{color:#000}
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar"><button onclick="window.print()">🖨️ พิมพ์ / บันทึก PDF</button></div>
+
+<div class="sheet">
+  <header class="top">
+    <div class="logo">OLIQ</div>
+    <div class="ttl">ฟอร์มเก็บ Feedback Validation<small>กรอกได้ในมือถือ/คอม แล้วกดพิมพ์เป็น PDF · 1 ฟอร์มต่อ 1 ที่</small></div>
+  </header>
+
+  <!-- Part 0 -->
+  <div class="sec">
+    <h3>0 · ข้อมูลพื้นฐาน</h3>
+    <div class="q"><span class="inline">สถานที่ <input type="text" class="mid"></span> &nbsp;
+      <span class="inline">วันที่ <input type="date"></span> &nbsp;
+      <span class="inline">เวลา <input type="text" class="sm"></span></div>
+    <div class="q"><span class="inline">ผู้ให้ข้อมูล <input type="text" class="mid"></span>
+      <div class="opts" style="margin-top:1mm">บทบาท:
+        <label class="opt"><input type="checkbox">เจ้าของ</label>
+        <label class="opt"><input type="checkbox">ผอ.</label>
+        <label class="opt"><input type="checkbox">พยาบาล</label>
+        <label class="opt"><input type="checkbox">ผู้ช่วยดูแล</label>
+        <label class="opt"><input type="checkbox">ญาติ</label>
+      </div></div>
+    <div class="q"><span class="inline">ผู้เก็บข้อมูล (ทีม) <input type="text" class="mid"></span></div>
+  </div>
+
+  <!-- Part A -->
+  <div class="sec">
+    <h3>A · ได้ลองจริงไหม</h3>
+    <div class="q"><label class="lab">ระดับการลอง</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="trylvl">ยังไม่ได้ลอง</label>
+        <label class="opt"><input type="radio" name="trylvl">caregiver ลองเอง/จำลอง</label>
+        <label class="opt"><input type="radio" name="trylvl">ใช้กับผู้พักจริง</label>
+      </div></div>
+    <div class="q"><label class="lab">ใช้กับ tier ไหน</label>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">ช่วยตัวเองได้ (T1)</label>
+        <label class="opt"><input type="checkbox">กึ่งพึ่งพิง (T2)</label>
+        <label class="opt"><input type="checkbox">ติดเตียง/stroke (T3)</label>
+      </div></div>
+    <div class="q"><span class="inline">จำนวนเคสที่ลอง <input type="number" class="sm"> เคส</span> &nbsp;
+      <span class="inline">ระยะเวลา <input type="text" class="sm"> วัน/ครั้ง</span></div>
+    <div class="q"><label class="lab">อัตราเจือจางที่ใช้</label>
+      <div class="opts">
+        <label class="opt"><input type="checkbox">เต็มสูตร</label>
+        <label class="opt"><input type="checkbox">1:1</label>
+        <label class="opt"><input type="checkbox">1:3</label>
+        <label class="opt"><input type="checkbox">1:4</label>
+        <label class="opt">อื่น <input type="text" class="sm"></label>
+      </div></div>
+    <div class="q"><span class="inline">ใครอนุญาตให้ลองกับผู้พัก <input type="text" class="mid"></span> &nbsp;
+      <span class="inline">ผ่าน Safety Gate?
+        <label class="opt"><input type="radio" name="gate">Y</label>
+        <label class="opt"><input type="radio" name="gate">N</label></span></div>
+  </div>
+
+  <!-- Part B -->
+  <div class="sec">
+    <h3>B · ผลการใช้ (UX หัวใจ)</h3>
+    <div class="q"><label class="lab">กลิ่นปากหาย/สะอาด ใน “รอบเดียว” ไหม</label>
+      <span class="inline"><label class="opt"><input type="radio" name="oneround">ใช่</label>
+      <label class="opt"><input type="radio" name="oneround">ต้อง <input type="text" class="sm"> รอบ</label>
+      &nbsp; (ของเดิมใช้ <input type="text" class="sm"> รอบ)</span></div>
+    <div class="row2">
+      <div class="q"><label class="lab">ฟอง</label><div class="opts">
+        <label class="opt"><input type="radio" name="foam">มากไป</label>
+        <label class="opt"><input type="radio" name="foam">พอดี</label>
+        <label class="opt"><input type="radio" name="foam">น้อยไป</label></div></div>
+      <div class="q"><label class="lab">แสบ/ซ่า (ที่อัตราเจือจาง <input type="text" class="sm">)</label><div class="opts">
+        <label class="opt"><input type="radio" name="sting">แสบไป</label>
+        <label class="opt"><input type="radio" name="sting">พอดี</label>
+        <label class="opt"><input type="radio" name="sting">ไม่แสบ</label></div></div>
+    </div>
+    <div class="row2">
+      <div class="q"><label class="lab">“รู้สึกสะอาดเหมือนแปรงฟัน”</label><div class="opts">
+        <label class="opt"><input type="radio" name="clean">ใช่</label>
+        <label class="opt"><input type="radio" name="clean">เฉย</label>
+        <label class="opt"><input type="radio" name="clean">ไม่</label></div></div>
+      <div class="q"><label class="lab">ผู้พักตอบสนอง</label><div class="opts">
+        <label class="opt"><input type="radio" name="resp">ชอบ/ร่วมมือ</label>
+        <label class="opt"><input type="radio" name="resp">เฉย</label>
+        <label class="opt"><input type="radio" name="resp">ต่อต้าน</label></div></div>
+    </div>
+    <div class="q"><label class="lab">วิธีใช้ชัดไหม (พันผ้าก๊อซ/เจือจาง เข้าใจทันที)</label>
+      <span class="inline"><label class="opt"><input type="radio" name="clear">ชัด</label>
+      <label class="opt"><input type="radio" name="clear">ต้องเดา/อธิบายเพิ่มตรง</label> <input type="text" class="mid"></span></div>
+    <div class="q"><label class="lab">เทียบของเดิม งานผู้ดูแล</label>
+      <span class="inline"><label class="opt"><input type="radio" name="load">เบาลง</label>
+      <label class="opt"><input type="radio" name="load">เท่าเดิม</label>
+      <label class="opt"><input type="radio" name="load">หนักขึ้น</label> &nbsp;เพราะ <input type="text" class="mid"></span></div>
+  </div>
+
+  <!-- Part C -->
+  <div class="sec">
+    <h3>C · Sweet-spot การเจือจาง (สำคัญ — ยังไม่ยืนยัน)</h3>
+    <div class="hint">ให้ caregiver เทียบ เต็มสูตร vs เจือจาง</div>
+    <div class="q"><label class="lab">อันไหน “ยังรู้สึกสะอาด”</label><div class="opts">
+      <label class="opt"><input type="radio" name="sw_clean">เต็ม</label>
+      <label class="opt"><input type="radio" name="sw_clean">1:1</label>
+      <label class="opt"><input type="radio" name="sw_clean">1:3</label>
+      <label class="opt"><input type="radio" name="sw_clean">1:4</label></div></div>
+    <div class="q"><label class="lab">อันไหน “แสบน้อยกว่า/สบายกว่า”</label><div class="opts">
+      <label class="opt"><input type="radio" name="sw_sting">เต็ม</label>
+      <label class="opt"><input type="radio" name="sw_sting">1:1</label>
+      <label class="opt"><input type="radio" name="sw_sting">1:3</label>
+      <label class="opt"><input type="radio" name="sw_sting">1:4</label></div></div>
+    <div class="q"><span class="inline">อัตราที่เขาจะเลือกใช้จริง <input type="text" class="mid"></span></div>
+  </div>
+
+  <!-- Part D -->
+  <div class="sec">
+    <h3>D · คำพูดตรง (verbatim — บังคับ 2 ประโยค)</h3>
+    <div class="verb">1. <input type="text" class="long" style="border-bottom:1px solid var(--plum)"></div>
+    <div class="verb">2. <input type="text" class="long" style="border-bottom:1px solid var(--plum)"></div>
+  </div>
+
+  <!-- Part E -->
+  <div class="sec">
+    <h3>E · Decision map (ใคร)</h3>
+    <div class="q"><span class="inline">ผู้ใช้จริง <input type="text" class="mid"></span></div>
+    <div class="q"><label class="lab">ผู้อนุมัติให้ “ลอง”</label><div class="opts">
+      <label class="opt"><input type="radio" name="approve">caregiver เอง</label>
+      <label class="opt"><input type="radio" name="approve">เจ้าของ/ผอ.</label>
+      <label class="opt"><input type="radio" name="approve">ญาติ</label></div></div>
+    <div class="q"><label class="lab">ผู้จ่ายเงิน (economic buyer)</label><div class="opts">
+      <label class="opt"><input type="radio" name="payer">ศูนย์ (Model A)</label>
+      <label class="opt"><input type="radio" name="payer">ญาติ (Model B)</label>
+      <label class="opt"><input type="radio" name="payer">hybrid</label></div></div>
+    <div class="q"><label class="lab">ใครเลือกแบรนด์ + เลือกจากอะไร</label>
+      <input type="text" class="long">
+      <div class="hint">โฆษณา / พยาบาลแนะนำ / ทันตแพทย์-มข.แนะนำ / ราคา</div></div>
+  </div>
+
+  <!-- Part F -->
+  <div class="sec">
+    <h3>F · ขนาด (sizing)</h3>
+    <div class="q"><span class="inline">เตียงทั้งหมด <input type="number" class="sm"></span> &nbsp;
+      <span class="inline">ติดเตียงสมบูรณ์ (T3) <input type="number" class="sm"> คน (~<input type="text" class="sm">%)</span> &nbsp;
+      <span class="inline">กึ่งพึ่งพิง (T2) <input type="number" class="sm"> คน</span></div>
+  </div>
+
+  <!-- Part G -->
+  <div class="sec">
+    <h3>G · ราคา (ถามหลังเห็นคุณค่า)</h3>
+    <div class="q"><label class="lab">ลักษณะนี้อยู่ใน</label><div class="opts">
+      <label class="opt"><input type="radio" name="budget">งบศูนย์</label>
+      <label class="opt"><input type="radio" name="budget">ญาติจัดซื้อ</label></div></div>
+    <div class="q"><label class="lab">เทียบราคากับ</label><div class="opts">
+      <label class="opt"><input type="checkbox">ต้นทุนสินค้า</label>
+      <label class="opt"><input type="checkbox">เวลา</label>
+      <label class="opt"><input type="checkbox">ภาระผู้ดูแล</label></div></div>
+    <div class="q"><span class="inline">ราคาที่ “รับได้/จะซื้อ” <input type="number" class="sm"> บาท/ขวด</span> <span class="hint">(anchor 120 / 159)</span></div>
+  </div>
+
+  <!-- Part H -->
+  <div class="sec">
+    <h3>H · Objection / สิ่งที่ต้องแก้</h3>
+    <div class="q"><label class="lab">ยังติด/ไม่มั่นใจตรงไหน</label><textarea></textarea></div>
+    <div class="q"><label class="lab">ถ้าแก้ได้ 1 อย่าง อยากให้แก้</label><textarea></textarea></div>
+    <div class="q"><label class="lab">อะไรทำให้ “ยังไม่อยากเดินหน้าต่อ”</label><textarea></textarea></div>
+  </div>
+
+  <!-- Part I -->
+  <div class="sec">
+    <h3>I · Commitment (พฤติกรรม ไม่ใช่คำชม)</h3>
+    <div class="opts">
+      <label class="opt"><input type="checkbox">ยอมให้สัมภาษณ์ต่อ</label>
+      <label class="opt"><input type="checkbox">รับตัวอย่างไปลองเพิ่ม</label>
+      <label class="opt"><input type="checkbox">นัดเก็บ feedback รอบหน้า</label>
+      <label class="opt"><input type="checkbox">แนะนำผู้ตัดสินใจ</label>
+      <label class="opt"><input type="checkbox">สนใจคุย pilot</label>
+      <label class="opt"><input type="checkbox">สนใจสั่งซื้อ</label>
+    </div>
+    <div class="q" style="margin-top:2mm"><label class="lab">ความสนใจรวม (1=เฉย … 5=อยากใช้ต่อแน่นอน)</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="score">1</label>
+        <label class="opt"><input type="radio" name="score">2</label>
+        <label class="opt"><input type="radio" name="score">3</label>
+        <label class="opt"><input type="radio" name="score">4</label>
+        <label class="opt"><input type="radio" name="score">5</label></div></div>
+  </div>
+
+  <!-- Part J -->
+  <div class="sec">
+    <h3>J · Next step (ปิดทุกครั้ง)</h3>
+    <div class="q"><span class="inline">ผู้รับผิดชอบฝั่งศูนย์ <input type="text" class="mid"></span> &nbsp;
+      <span class="inline">เบอร์/LINE <input type="text" class="mid"></span></div>
+    <div class="q"><span class="inline">วันนัดถัดไป <input type="date"></span></div>
+    <div class="q"><label class="lab">สิ่งที่ทีมต้องเอามาให้เขาเห็น</label><input type="text" class="long"></div>
+  </div>
+
+  <!-- Hypotheses -->
+  <div class="sec hyp">
+    <h3>✅ สมมติฐานที่ยืนยันรอบนี้ (ติ๊กถ้าข้อมูลรอบนี้สนับสนุน)</h3>
+    <label class="opt"><input type="checkbox">ศูนย์แบ่งผู้พัก 3 tier ตาม cooperation เหมือนกัน</label>
+    <label class="opt"><input type="checkbox">Tier 3 (ติดเตียง ผ้าก๊อซน้ำยาอย่างเดียว) = จุดที่ OLIQ ช่วยชัดสุด</label>
+    <label class="opt"><input type="checkbox">กลิ่นปากหายรอบเดียว เหนือของเดิม (ลดแรงผู้ดูแล)</label>
+    <label class="opt"><input type="checkbox">Caregiver = ผู้อนุมัติลอง + ผู้ชี้ว่าจำเป็น (prescriber)</label>
+    <label class="opt"><input type="checkbox">ฟอง/แสบ เป็นปัญหาซ้ำที่ tier 3 → ต้องคุมสูตร/เจือจาง</label>
+  </div>
+
+  <div class="note">มินิฟอร์มฝากศูนย์ให้ caregiver จดเอง 5 ข้อ: (1) เปิด/เท/ผสมง่ายไหม (2) กลิ่น/รส/ความรู้สึกหลังใช้ (3) ขั้นไหนเข้าใจทันที/ต้องเดา (4) เทียบของเดิม งานเบาลง/เพิ่มตรงไหน (5) ถ้าปรับได้ 1 อย่าง อยากให้ปรับอะไร</div>
+</div>
+
+</body>
+</html>
